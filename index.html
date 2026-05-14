@@ -35,6 +35,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(255, 255, 255, 0.02);
             transition: 0.3s;
+            cursor: pointer;
         }
         .filter-btn.active {
             background: var(--primary);
@@ -62,25 +63,37 @@
             display: inline-block;
             box-shadow: 0 0 10px var(--primary);
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.5s ease forwards; }
     </style>
 </head>
 <body class="min-h-screen p-6 lg:p-16">
 
     <!-- Header -->
-    <header class="max-w-7xl mx-auto mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
+    <header class="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
         <div>
             <div class="flex items-center gap-3 mb-2">
                 <span class="status-dot"></span>
-                <span class="mono text-xs tracking-[0.3em] text-emerald-500 uppercase font-bold">Repository Live</span>
+                <span class="mono text-xs tracking-[0.3em] text-emerald-500 uppercase font-bold">Network Stable</span>
             </div>
-            <h1 class="text-5xl font-black tracking-tighter text-white text-center md:text-left">TVnc<span class="text-emerald-500">.</span>HUB</h1>
+            <h1 class="text-5xl font-black tracking-tighter text-white">TVnc<span class="text-emerald-500">.</span>HUB</h1>
+            <p class="text-gray-500 mt-2 mono text-sm">Unified Virtualization & Kernel Repository</p>
         </div>
-        
-        <!-- Filter Toggle -->
-        <div class="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10 mono text-[10px]">
-            <button onclick="filterOS('ALL')" id="btn-ALL" class="filter-btn active px-6 py-2 rounded-lg font-bold uppercase">All</button>
-            <button onclick="filterOS('QCOW2')" id="btn-QCOW2" class="filter-btn px-6 py-2 rounded-lg font-bold uppercase">QCOW2</button>
-            <button onclick="filterOS('ISO')" id="btn-ISO" class="filter-btn px-6 py-2 rounded-lg font-bold uppercase">ISO</button>
+
+        <div class="flex flex-col items-end gap-4">
+            <!-- Filter Toggle -->
+            <div class="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10 mono text-[10px]">
+                <button onclick="filterOS('ALL')" id="btn-ALL" class="filter-btn active px-6 py-2 rounded-lg font-bold uppercase">All</button>
+                <button onclick="filterOS('QCOW2')" id="btn-QCOW2" class="filter-btn px-6 py-2 rounded-lg font-bold uppercase">QCOW2</button>
+                <button onclick="filterOS('ISO')" id="btn-ISO" class="filter-btn px-6 py-2 rounded-lg font-bold uppercase">ISO</button>
+            </div>
+            <div class="text-right hidden md:block">
+                <p class="mono text-[10px] text-gray-600 uppercase">Current Session: USER</p>
+                <p class="mono text-[10px] text-emerald-900 uppercase">Build: 2026.05.REV14</p>
+            </div>
         </div>
     </header>
 
@@ -89,15 +102,21 @@
         <!-- JS populated -->
     </main>
 
-    <footer class="max-w-7xl mx-auto mt-24 border-t border-white/5 pt-10 text-center md:text-left">
-        <p class="text-gray-600 text-xs mono uppercase tracking-widest">Base Engine: 23MB | User: NASA_COMANDER</p>
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto mt-24 border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-gray-600 text-xs mono uppercase tracking-widest">SYSTEM SIZE: 23MB (EXPANDABLE) | USER</p>
+        <div class="flex gap-8 text-[10px] mono text-gray-500">
+            <span class="hover:text-emerald-500 cursor-pointer">DOCUMENTATION</span>
+            <span class="hover:text-emerald-500 cursor-pointer">API_KEYS</span>
+            <span class="hover:text-emerald-500 cursor-pointer">GITHUB</span>
+        </div>
     </footer>
 
     <script>
         const distros = [
             { name: "Arch Linux", type: "QCOW2", size: "800MB", color: "sky-500", url: "https://gitlab.archlinux.org/archlinux/arch-boxes/-/package_files/11743/download" },
             { name: "Alpine", type: "ISO", size: "150MB", color: "emerald-500", url: "https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/x86_64/alpine-standard-3.23.4-x86_64.iso" },
-            { name: "Ubuntu", type: "ISO", size: "2.1GB", color: "orange-500", url: "https://ubuntu.com/download/desktop/thank-you?version=26.04&architecture=amd64&lts=true" },
+            { name: "Ubuntu", type: "ISO", size: "2.1GB", color: "orange-500", url: "https://ubuntu.com/download/desktop/" },
             { name: "Debian", type: "ISO", size: "1.4GB", color: "rose-500", url: "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.4.0-amd64-netinst.iso" },
             { name: "AlmaLinux", type: "ISO", size: "1.8GB", color: "blue-500", url: "https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10.1-x86_64-boot.iso" },
             { name: "Void Linux", type: "ISO", size: "300MB", color: "indigo-500", url: "https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-base.iso" },
@@ -110,15 +129,15 @@
 
         function renderGrid(filterType) {
             const grid = document.getElementById('repo-grid');
-            grid.innerHTML = ''; // Clear grid
+            grid.innerHTML = ''; 
 
             const filtered = filterType === 'ALL' 
                 ? distros 
                 : distros.filter(os => os.type === filterType);
 
-            filtered.forEach(os => {
+            filtered.forEach((os, index) => {
                 grid.innerHTML += `
-                    <div class="glass-card p-8 rounded-2xl animate-fade-in">
+                    <div class="glass-card p-8 rounded-2xl animate-fade-in group" style="animation-delay: ${index * 0.05}s">
                         <div class="flex justify-between items-start mb-6">
                             <div class="p-3 rounded-xl bg-${os.color}/10 border border-${os.color}/20">
                                 <svg class="w-6 h-6 text-${os.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,7 +147,7 @@
                             <span class="mono text-[10px] text-gray-500 border border-white/10 px-2 py-1 rounded-md uppercase">${os.type}</span>
                         </div>
                         <h3 class="text-xl font-bold text-white mb-1">${os.name}</h3>
-                        <p class="text-xs text-gray-500 mono mb-8 tracking-tighter">NODE: remote://${os.name.toLowerCase().replace(' ', '')}</p>
+                        <p class="text-xs text-gray-500 mono mb-8 tracking-tighter uppercase">NODE_PATH: remote://system/${os.name.toLowerCase().replace(/\s+/g, '')}</p>
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-bold text-emerald-500/80 mono">${os.size}</span>
                             <a href="${os.url}" download class="btn-premium px-6 py-2 text-[10px] uppercase tracking-widest">Pull Image</a>
@@ -139,11 +158,8 @@
         }
 
         function filterOS(type) {
-            // Update active button UI
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('btn-' + type).classList.add('active');
-            
-            // Re-render
             renderGrid(type);
         }
 
