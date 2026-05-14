@@ -31,20 +31,32 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 255, 163, 0.1);
         }
+        .filter-btn {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            transition: 0.3s;
+        }
+        .filter-btn.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+        }
         .btn-premium {
             background: var(--primary);
             color: #000;
             font-weight: 700;
             transition: all 0.3s;
             clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            display: inline-block;
+            text-align: center;
         }
         .btn-premium:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px var(--primary);
         }
         .status-dot {
-            height: 8px;
-            width: 8px;
+            height: 8px; width: 8px;
             background-color: var(--primary);
             border-radius: 50%;
             display: inline-block;
@@ -53,72 +65,90 @@
     </style>
 </head>
 <body class="min-h-screen p-6 lg:p-16">
+
     <!-- Header -->
-    <header class="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
+    <header class="max-w-7xl mx-auto mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
         <div>
             <div class="flex items-center gap-3 mb-2">
                 <span class="status-dot"></span>
-                <span class="mono text-xs tracking-[0.3em] text-emerald-500 uppercase font-bold">Network Stable</span>
+                <span class="mono text-xs tracking-[0.3em] text-emerald-500 uppercase font-bold">Repository Live</span>
             </div>
-            <h1 class="text-5xl font-black tracking-tighter text-white">TVnc<span class="text-emerald-500">.</span>HUB</h1>
-            <p class="text-gray-500 mt-2 mono text-sm">Unified Virtualization & Kernel Repository</p>
+            <h1 class="text-5xl font-black tracking-tighter text-white text-center md:text-left">TVnc<span class="text-emerald-500">.</span>HUB</h1>
         </div>
-        <div class="text-right hidden md:block">
-            <p class="mono text-[10px] text-gray-600 uppercase">Current Session: NASA-COMANDER</p>
-            <p class="mono text-[10px] text-emerald-900 uppercase">Build: 2026.05.REV14</p>
+        
+        <!-- Filter Toggle -->
+        <div class="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10 mono text-[10px]">
+            <button onclick="filterOS('ALL')" id="btn-ALL" class="filter-btn active px-6 py-2 rounded-lg font-bold uppercase">All</button>
+            <button onclick="filterOS('QCOW2')" id="btn-QCOW2" class="filter-btn px-6 py-2 rounded-lg font-bold uppercase">QCOW2</button>
+            <button onclick="filterOS('ISO')" id="btn-ISO" class="filter-btn px-6 py-2 rounded-lg font-bold uppercase">ISO</button>
         </div>
     </header>
 
     <!-- OS Grid -->
     <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="repo-grid">
-        <!-- JS will populate here -->
+        <!-- JS populated -->
     </main>
 
-    <footer class="max-w-7xl mx-auto mt-24 border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="text-gray-600 text-xs mono">SYSTEM SIZE: 23MB (EXPANDABLE)</p>
-        <div class="flex gap-8 text-[10px] mono text-gray-500">
-            <span class="hover:text-emerald-500 cursor-pointer">DOCUMENTATION</span>
-            <span class="hover:text-emerald-500 cursor-pointer">API_KEYS</span>
-            <span class="hover:text-emerald-500 cursor-pointer">GITHUB</span>
-        </div>
+    <footer class="max-w-7xl mx-auto mt-24 border-t border-white/5 pt-10 text-center md:text-left">
+        <p class="text-gray-600 text-xs mono uppercase tracking-widest">Base Engine: 23MB | User: NASA_COMANDER</p>
     </footer>
 
     <script>
         const distros = [
-            { name: "Arch Linux", type: "QCOW2", size: "800MB", color: "sky-500" },
-            { name: "Alpine", type: "ISO", size: "150MB", color: "emerald-500" },
-            { name: "Ubuntu", type: "QCOW2", size: "2.1GB", color: "orange-500" },
-            { name: "Debian", type: "QCOW2", size: "1.4GB", color: "rose-500" },
-            { name: "AlmaLinux", type: "QCOW2", size: "1.8GB", color: "blue-500" },
-            { name: "Void Linux", type: "QCOW2", size: "300MB", color: "indigo-500" },
-            { name: "Manjaro", type: "QCOW2", size: "1.9GB", color: "green-500" },
-            { name: "Linux Mint", type: "ISO", size: "2.4GB", color: "emerald-600" },
-            { name: "Fedora", type: "QCOW2", size: "1.6GB", color: "blue-600" },
-            { name: "Kali Linux", type: "QCOW2", size: "2.8GB", color: "cyan-500" },
-            { name: "Deepin", type: "ISO", size: "3.5GB", color: "blue-400" }
+            { name: "Arch Linux", type: "QCOW2", size: "800MB", color: "sky-500", url: "https://gitlab.archlinux.org/archlinux/arch-boxes/-/package_files/11743/download" },
+            { name: "Alpine", type: "ISO", size: "150MB", color: "emerald-500", url: "https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/x86_64/alpine-standard-3.23.4-x86_64.iso" },
+            { name: "Ubuntu", type: "ISO", size: "2.1GB", color: "orange-500", url: "https://ubuntu.com/download/desktop/thank-you?version=26.04&architecture=amd64&lts=true" },
+            { name: "Debian", type: "ISO", size: "1.4GB", color: "rose-500", url: "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.4.0-amd64-netinst.iso" },
+            { name: "AlmaLinux", type: "ISO", size: "1.8GB", color: "blue-500", url: "https://repo.almalinux.org/almalinux/10/isos/x86_64/AlmaLinux-10.1-x86_64-boot.iso" },
+            { name: "Void Linux", type: "ISO", size: "300MB", color: "indigo-500", url: "https://repo-default.voidlinux.org/live/current/void-live-x86_64-20250202-base.iso" },
+            { name: "Manjaro", type: "ISO", size: "1.9GB", color: "green-500", url: "https://download.manjaro.org/xfce/26.0.4/manjaro-xfce-26.0.4-260327-linux618.iso" },
+            { name: "Linux Mint", type: "ISO", size: "2.4GB", color: "emerald-600", url: "https://mirror.clarkson.edu/linuxmint-images/stable/22.3/linuxmint-22.3-xfce-64bit.iso" },
+            { name: "Fedora", type: "ISO", size: "1.6GB", color: "blue-600", url: "https://download.fedoraproject.org/pub/fedora/linux/releases/44/Workstation/x86_64/iso/Fedora-Workstation-Live-44-1.7.x86_64.iso" },
+            { name: "Kali Linux", type: "ISO", size: "2.8GB", color: "cyan-500", url: "https://cdimage.kali.org/kali-2026.1/kali-linux-2026.1-installer-amd64.iso" },
+            { name: "Deepin", type: "ISO", size: "3.5GB", color: "blue-400", url: "https://cdimage.deepin.com/releases/25.1.0/amd64/deepin-desktop-community-25.1.0-amd64.iso" }
         ];
 
-        const grid = document.getElementById('repo-grid');
-        distros.forEach(os => {
-            grid.innerHTML += `
-                <div class="glass-card p-8 rounded-2xl group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="p-3 rounded-xl bg-${os.color}/10 border border-${os.color}/20">
-                            <svg class="w-6 h-6 text-${os.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                            </svg>
+        function renderGrid(filterType) {
+            const grid = document.getElementById('repo-grid');
+            grid.innerHTML = ''; // Clear grid
+
+            const filtered = filterType === 'ALL' 
+                ? distros 
+                : distros.filter(os => os.type === filterType);
+
+            filtered.forEach(os => {
+                grid.innerHTML += `
+                    <div class="glass-card p-8 rounded-2xl animate-fade-in">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="p-3 rounded-xl bg-${os.color}/10 border border-${os.color}/20">
+                                <svg class="w-6 h-6 text-${os.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </div>
+                            <span class="mono text-[10px] text-gray-500 border border-white/10 px-2 py-1 rounded-md uppercase">${os.type}</span>
                         </div>
-                        <span class="mono text-[10px] text-gray-500 border border-white/10 px-2 py-1 rounded-md uppercase">${os.type}</span>
+                        <h3 class="text-xl font-bold text-white mb-1">${os.name}</h3>
+                        <p class="text-xs text-gray-500 mono mb-8 tracking-tighter">NODE: remote://${os.name.toLowerCase().replace(' ', '')}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-bold text-emerald-500/80 mono">${os.size}</span>
+                            <a href="${os.url}" download class="btn-premium px-6 py-2 text-[10px] uppercase tracking-widest">Pull Image</a>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-1">${os.name}</h3>
-                    <p class="text-xs text-gray-500 mono mb-8">NODE_PATH: remote://system/${os.name.toLowerCase()}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-bold text-white/80">${os.size}</span>
-                        <button class="btn-premium px-6 py-2 text-[10px] uppercase tracking-widest">Pull Image</button>
-                    </div>
-                </div>
-            `;
-        });
+                `;
+            });
+        }
+
+        function filterOS(type) {
+            // Update active button UI
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + type).classList.add('active');
+            
+            // Re-render
+            renderGrid(type);
+        }
+
+        // Initial Load
+        renderGrid('ALL');
     </script>
 </body>
 </html>
