@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVnc Hub | Core Repository</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ffa3;
+            --bg-dark: #080808;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+        body { 
+            background-color: var(--bg-dark); 
+            color: #e0e0e0; 
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at 50% -20%, #1a3a2a 0%, var(--bg-dark) 50%);
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-card { 
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-card:hover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 163, 0.05);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 163, 0.1);
+        }
+        .btn-premium {
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+            transition: all 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+        }
+        .btn-premium:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--primary);
+        }
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--primary);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6 lg:p-16">
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
+        <div>
+            <div class="flex items-center gap-3 mb-2">
+                <span class="status-dot"></span>
+                <span class="mono text-xs tracking-[0.3em] text-emerald-500 uppercase font-bold">Network Stable</span>
+            </div>
+            <h1 class="text-5xl font-black tracking-tighter text-white">TVnc<span class="text-emerald-500">.</span>HUB</h1>
+            <p class="text-gray-500 mt-2 mono text-sm">Unified Virtualization & Kernel Repository</p>
+        </div>
+        <div class="text-right hidden md:block">
+            <p class="mono text-[10px] text-gray-600 uppercase">Current Session: NASA-COMANDER</p>
+            <p class="mono text-[10px] text-emerald-900 uppercase">Build: 2026.05.REV14</p>
+        </div>
+    </header>
+
+    <!-- OS Grid -->
+    <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="repo-grid">
+        <!-- JS will populate here -->
+    </main>
+
+    <footer class="max-w-7xl mx-auto mt-24 border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-gray-600 text-xs mono">SYSTEM SIZE: 23MB (EXPANDABLE)</p>
+        <div class="flex gap-8 text-[10px] mono text-gray-500">
+            <span class="hover:text-emerald-500 cursor-pointer">DOCUMENTATION</span>
+            <span class="hover:text-emerald-500 cursor-pointer">API_KEYS</span>
+            <span class="hover:text-emerald-500 cursor-pointer">GITHUB</span>
+        </div>
+    </footer>
+
+    <script>
+        const distros = [
+            { name: "Arch Linux", type: "QCOW2", size: "800MB", color: "sky-500" },
+            { name: "Alpine", type: "ISO", size: "150MB", color: "emerald-500" },
+            { name: "Ubuntu", type: "QCOW2", size: "2.1GB", color: "orange-500" },
+            { name: "Debian", type: "QCOW2", size: "1.4GB", color: "rose-500" },
+            { name: "AlmaLinux", type: "QCOW2", size: "1.8GB", color: "blue-500" },
+            { name: "Void Linux", type: "QCOW2", size: "300MB", color: "indigo-500" },
+            { name: "Manjaro", type: "QCOW2", size: "1.9GB", color: "green-500" },
+            { name: "Linux Mint", type: "ISO", size: "2.4GB", color: "emerald-600" },
+            { name: "Fedora", type: "QCOW2", size: "1.6GB", color: "blue-600" },
+            { name: "Kali Linux", type: "QCOW2", size: "2.8GB", color: "cyan-500" },
+            { name: "Deepin", type: "ISO", size: "3.5GB", color: "blue-400" }
+        ];
+
+        const grid = document.getElementById('repo-grid');
+        distros.forEach(os => {
+            grid.innerHTML += `
+                <div class="glass-card p-8 rounded-2xl group">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="p-3 rounded-xl bg-${os.color}/10 border border-${os.color}/20">
+                            <svg class="w-6 h-6 text-${os.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                        <span class="mono text-[10px] text-gray-500 border border-white/10 px-2 py-1 rounded-md uppercase">${os.type}</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1">${os.name}</h3>
+                    <p class="text-xs text-gray-500 mono mb-8">NODE_PATH: remote://system/${os.name.toLowerCase()}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-bold text-white/80">${os.size}</span>
+                        <button class="btn-premium px-6 py-2 text-[10px] uppercase tracking-widest">Pull Image</button>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
